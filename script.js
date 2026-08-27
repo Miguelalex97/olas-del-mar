@@ -2,6 +2,10 @@
    OLAS DEL MAR - JavaScript
    ======================================== */
 
+// Base del backend (la define index.html con window.API_BASE).
+// Si está vacío, usa el mismo origen (útil en local / túnel).
+const API = window.API_BASE || "";
+
 // ─── Datos del Menú ──────────────────────────────────────
 const menuData = [
     // Entradas
@@ -247,10 +251,18 @@ function renderCartSummary() {
 
 function setupCartButtons() {
     document.getElementById('clearCartBtn')?.addEventListener('click', clearCart);
-    document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+    document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
         if (cart.length === 0) return;
         const total = cart.reduce((sum, c) => sum + (c.price * c.qty), 0);
         const count = cart.reduce((sum, c) => sum + c.qty, 0);
+        const nombre = prompt("¿Nombre para el pedido?", "Cliente") || "Cliente";
+        try {
+            await fetch(API + '/api/pedido', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, items: cart, total })
+            });
+        } catch (e) { /* el servidor local puede no estar; igual confirmamos */ }
         showToast(`¡Pedido confirmado! ${count} artículos por $${total.toFixed(2)}. ¡Gracias!`);
         cart = [];
         updateCartBadge();
@@ -309,26 +321,50 @@ function setupNavScroll() {
 }
 
 // ─── Formularios ────────────────────────────────────────
+async function postJSON(url, payload) {
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (e) { /* ignore si el server no está */ }
+}
+
 function setupForms() {
     const resForm = document.getElementById('reservationForm');
     if (resForm) {
         const dateInput = document.getElementById('resDate');
         dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
-        resForm.addEventListener('submit', (e) => {
+        resForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('resName').value;
-            const date = document.getElementById('resDate').value;
-            const time = document.getElementById('resTime').value;
-            const guests = document.getElementById('resGuests').value;
-            showToast(`¡Reservación confirmada para ${name}! ${date} a las ${time} para ${guests}. Te esperamos.`);
+            const payload = {
+                nombre: name,
+                telefono: document.getElementById('resPhone').value,
+                fecha: document.getElementById('resDate').value,
+                hora: document.getElementById('resTime').value,
+                personas: document.getElementById('resGuests').value,
+                mesa: document.getElementById('resTableType').value,
+                notas: document.getElementById('resNotes').value
+            };
+            await postJSON(API + '/api/reserva', payload);
+            showToast(`¡Reservación confirmada para ${name}! Te esperamos.`);
             resForm.reset();
         });
     }
 
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const payload = {
+                nombre: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                asunto: document.getElementById('contactSubject').value,
+                mensaje: document.getElementById('contactMessage').value
+            };
+            await postJSON(API + '/api/contacto', payload);
             showToast('¡Mensaje enviado! Nos pondremos en contacto contigo pronto.');
             contactForm.reset();
         });
