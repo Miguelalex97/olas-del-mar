@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel · Olas del Mar</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --coral:#ff8c42; --coral-d:#f4731f; --teal:#0ea5a5; --blue:#3b82f6;
+    --bg1:#0b0f1a; --bg2:#0e1626; --glass:rgba(255,255,255,.06);
+    --glass-bd:rgba(255,255,255,.10);
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family:'Inter',sans-serif; color:#e8edf5; min-height:100vh; margin:0;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(255,140,66,.18), transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, rgba(14,165,165,.18), transparent 55%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    background-attachment:fixed;
+  }
+  h1,h2,h3,h4,h5{font-family:'Fraunces',serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 60px}
+
+  /* Header */
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .brand .logo{
+    width:54px;height:54px;border-radius:16px;display:grid;place-items:center;
+    font-size:26px;color:#fff;
+    background:linear-gradient(135deg,var(--coral),var(--teal));
+    box-shadow:0 10px 30px rgba(255,140,66,.35);
+  }
+  .brand h1{font-size:1.9rem;margin:0;font-weight:700;letter-spacing:-.5px}
+  .brand .sub{color:#9aa6b8;font-size:.9rem;margin-left:2px}
+  .live{display:inline-flex;align-items:center;gap:8px;margin-left:auto;
+    background:var(--glass);border:1px solid var(--glass-bd);padding:7px 14px;border-radius:50px;font-size:.8rem;color:#9aa6b8}
+  .live .dot{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+
+  /* Stat cards */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:26px 0}
+  .stat{
+    background:var(--glass);border:1px solid var(--glass-bd);border-radius:20px;padding:20px;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    display:flex;align-items:center;gap:16px;transition:transform .25s, box-shadow .25s;
+  }
+  .stat:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+  .stat .ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:22px;color:#fff;flex:none}
+  .stat.s1 .ico{background:linear-gradient(135deg,var(--coral),var(--coral-d))}
+  .stat.s2 .ico{background:linear-gradient(135deg,var(--teal),#0891b2)}
+  .stat.s3 .ico{background:linear-gradient(135deg,var(--blue),#6366f1)}
+  .stat .num{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:700;line-height:1}
+  .stat .lbl{color:#9aa6b8;font-size:.82rem;margin-top:2px}
+
+  /* Tabs */
+  .tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .tab{
+    border:1px solid var(--glass-bd);background:var(--glass);color:#cdd6e3;
+    padding:10px 18px;border-radius:50px;cursor:pointer;font-weight:600;font-size:.9rem;
+    display:inline-flex;align-items:center;gap:8px;transition:.25s;
+  }
+  .tab:hover{color:#fff;border-color:var(--coral)}
+  .tab.active{background:linear-gradient(135deg,var(--coral),var(--coral-d));color:#0b0f1a;border-color:transparent;box-shadow:0 8px 22px rgba(255,140,66,.35)}
+
+  /* Table */
+  .panel{background:var(--glass);border:1px solid var(--glass-bd);border-radius:22px;overflow:hidden;backdrop-filter:blur(14px)}
+  .panel .phead{padding:16px 20px;border-bottom:1px solid var(--glass-bd);display:flex;align-items:center;gap:10px;font-weight:600}
+  .panel .phead i{color:var(--coral)}
+  table{width:100%;border-collapse:collapse}
+  thead th{
+    text-align:left;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:#9aa6b8;
+    padding:14px 18px;background:rgba(255,255,255,.03);font-weight:700;
+  }
+  tbody td{padding:14px 18px;border-top:1px solid rgba(255,255,255,.05);font-size:.9rem;vertical-align:middle}
+  tbody tr{transition:background .2s}
+  tbody tr:hover{background:rgba(255,140,66,.08)}
+  .pill{display:inline-grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:50px;
+    background:linear-gradient(135deg,var(--coral),var(--coral-d));color:#0b0f1a;font-weight:700;font-size:.8rem}
+  .chip{display:inline-block;background:rgba(14,165,165,.16);color:#7fe3e3;border:1px solid rgba(14,165,165,.3);
+    padding:3px 9px;border-radius:50px;font-size:.75rem;margin:2px 3px 2px 0}
+  .badge-amt{background:rgba(255,140,66,.16);color:var(--coral);border:1px solid rgba(255,140,66,.3);padding:4px 10px;border-radius:8px;font-weight:700}
+  a.tel{color:#7fe3e3;text-decoration:none}
+  a.tel:hover{text-decoration:underline}
+  .empty{padding:40px;text-align:center;color:#9aa6b8}
+  .foot{text-align:center;color:#67748a;font-size:.82rem;margin-top:26px}
+  .foot a{color:var(--coral);text-decoration:none}
+
+  /* In-page toast */
+  .toast-stack{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+  .ntoast{
+    background:rgba(20,26,40,.92);border:1px solid var(--glass-bd);border-left:4px solid var(--coral);
+    border-radius:14px;padding:14px 18px;min-width:260px;box-shadow:0 14px 40px rgba(0,0,0,.5);
+    animation:slideIn .35s ease;backdrop-filter:blur(10px)
+  }
+  .ntoast .t{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:8px}
+  .ntoast .m{color:#b9c4d4;font-size:.82rem;margin-top:3px}
+  @keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+  @media(max-width:680px){.stats{grid-template-columns:1fr}.brand .sub{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><i class="fa-solid fa-water"></i></div>
+    <div>
+      <h1>Olas del Mar</h1>
+      <div class="sub">Panel de administración · 2026</div>
+    </div>
+    <span class="live"><span class="dot"></span> En vivo</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat s1"><div class="ico"><i class="fa-solid fa-bag-shopping"></i></div><div><div class="num" id="cPedidos">0</div><div class="lbl">Pedidos</div></div></div>
+    <div class="stat s2"><div class="ico"><i class="fa-solid fa-calendar-check"></i></div><div><div class="num" id="cReservas">0</div><div class="lbl">Reservas</div></div></div>
+    <div class="stat s3"><div class="ico"><i class="fa-solid fa-envelope"></i></div><div><div class="num" id="cMensajes">0</div><div class="lbl">Mensajes</div></div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-t="pedidos"><i class="fa-solid fa-bag-shopping"></i> Pedidos</div>
+    <div class="tab" data-t="reservas"><i class="fa-solid fa-calendar-check"></i> Reservas</div>
+    <div class="tab" data-t="mensajes"><i class="fa-solid fa-envelope"></i> Mensajes</div>
+  </div>
+
+  <div class="panel">
+    <div class="phead" id="phead"><i class="fa-solid fa-list"></i> <span id="pheadTxt">Pedidos recientes</span></div>
+    <div id="out"></div>
+  </div>
+
+  <div class="foot">Olas del Mar · <a href="/">volver al sitio web</a></div>
+</div>
+
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+const maps = {
+  pedidos: [["#","id"],["Cliente","nombre"],["Artículos","items"],["Total","total"],["Fecha","fecha"]],
+  reservas: [["#","id"],["Nombre","nombre"],["Teléfono","telefono"],["Fecha","fecha"],["Hora","hora"],["Personas","personas"],["Mesa","mesa"],["Notas","notas"],["Registro","fecha_reg"]],
+  mensajes: [["#","id"],["Nombre","nombre"],["Email","email"],["Asunto","asunto"],["Mensaje","mensaje"],["Fecha","fecha"]]
+};
+const heads = { pedidos:"Pedidos recientes", reservas:"Reservas recientes", mensajes:"Mensajes recibidos" };
+const icons = { pedidos:"fa-bag-shopping", reservas:"fa-calendar-check", mensajes:"fa-envelope" };
+
+let lastCounts = { pedidos:0, reservas:0, mensajes:0 };
+let cur = "pedidos";
+
+function fmt(campo, valor){
+  if(campo==="items" && valor){
+    try{ return JSON.parse(valor).map(i=>`<span class="chip">${i.qty||1}× ${i.name}</span>`).join(""); }
+    catch(e){ return valor; }
+  }
+  if(campo==="total") return `<span class="badge-amt">$${parseFloat(valor).toFixed(2)}</span>`;
+  if(campo==="telefono" && valor) return `<a class="tel" href="tel:${valor}"><i class="fa-solid fa-phone"></i> ${valor}</a>`;
+  return valor ?? "";
+}
+
+async function load(t){
+  cur = t;
+  const res = await fetch("/api/"+t);
+  const data = await res.json();
+  document.getElementById("pheadTxt").textContent = heads[t];
+  document.querySelector(".phead i").className = "fa-solid "+icons[t];
+  const cols = maps[t];
+  let html = `<table><thead><tr>${cols.map(c=>`<th>${c[0]}</th>`).join("")}</tr></thead><tbody>`;
+  if(data.length===0) html += `<tr><td class="empty" colspan="${cols.length}">Aún no hay registros 🌊</td></tr>`;
+  data.forEach(r=>{
+    html += "<tr>" + cols.map(c=>{
+      const v = (c[0]==="#") ? `<span class="pill">${r[c[1]]}</span>` : fmt(c[0], r[c[1]]);
+      return `<td>${v}</td>`;
+    }).join("") + "</tr>";
+  });
+  html += "</tbody></table>";
+  document.getElementById("out").innerHTML = html;
+  document.getElementById("c"+t.charAt(0).toUpperCase()+t.slice(1)).textContent = data.length;
+  return data.length;
+}
+
+document.querySelectorAll(".tab").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    load(b.dataset.t);
+  };
+});
+
+// Notificaciones en pantalla (browser) cuando hay nuevos registros
+function pushToast(title, msg){
+  const el = document.createElement("div");
+  el.className="ntoast";
+  el.innerHTML = `<div class="t"><i class="fa-solid fa-bell" style="color:var(--coral)"></i> ${title}</div><div class="m">${msg}</div>`;
+  document.getElementById("toasts").appendChild(el);
+  setTimeout(()=>el.remove(), 6000);
+  if(Notification?.permission==="granted")
+    new Notification(title, {body:msg});
+}
+
+async function poll(){
+  for(const t of ["pedidos","reservas","mensajes"]){
+    try{
+      const n = (await (await fetch("/api/"+t)).json()).length;
+      if(n > lastCounts[t] && lastCounts[t]!==0){
+        const labels={pedidos:"🛒 Nuevo pedido",reservas:"📅 Nueva reserva",mensajes:"✉️ Nuevo mensaje"};
+        pushToast(labels[t], "Hay "+(n-lastCounts[t])+" nuevo(s) en "+t);
+      }
+      lastCounts[t]=n;
+    }catch(e){}
+  }
+}
+
+(async ()=>{
+  await load("pedidos");
+  await poll();
+  if("Notification" in window && Notification.permission==="default")
+    Notification.requestPermission();
+  setInterval(poll, 8000);
+})();
+</script>
+</body>
+</html>
