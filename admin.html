@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel · Olas del Mar</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style> body{background:#0e1016;color:#eee;font-family:Inter,sans-serif} .card{background:#171a23;border:1px solid #2a2e3a} </style>
+</head>
+<body>
+<div class="container py-4">
+  <h2 class="text-warning">🌊 Olas del Mar · Panel</h2>
+  <ul class="nav nav-pills mb-3" id="tabs">
+    <li class="nav-item"><button class="nav-link active" data-t="pedidos">Pedidos</button></li>
+    <li class="nav-item"><button class="nav-link" data-t="reservas">Reservas</button></li>
+    <li class="nav-item"><button class="nav-link" data-t="mensajes">Mensajes</button></li>
+  </ul>
+  <div id="out"></div>
+  <p class="text-white-50 mt-3"><a href="/" class="text-warning">← Volver al sitio</a></p>
+</div>
+<script>
+const labels = {
+  pedidos: ["#","Cliente","Artículos","Total","Fecha"],
+  reservas: ["#","Nombre","Teléfono","Fecha","Hora","Personas","Mesa","Notas","Registro"],
+  mensajes: ["#","Nombre","Email","Asunto","Mensaje","Fecha"]
+};
+async function load(t){
+  const res = await fetch("/api/"+t); const data = await res.json();
+  const cols = labels[t];
+  let html = `<div class="card p-3"><div class="table-responsive"><table class="table table-dark table-striped"><thead><tr>`+
+    cols.map(c=>`<th>${c}</th>`).join("")+`</tr></thead><tbody>`;
+  if(data.length===0) html += `<tr><td colspan="${cols.length}" class="text-center">Sin registros</td></tr>`;
+  data.forEach(r=>{
+    html += "<tr>"+cols.slice(1).map(c=>{
+      let k = Object.keys(r).find(key=>key.toLowerCase()===c.toLowerCase().replace(/ó/,'o').replace(/í/,'i').replace(/\s/g,''));
+      let v = r[k];
+      if(c==="Artículos" && v) { try{ v = JSON.parse(v).map(i=>`${i.qty}x ${i.name}`).join(", "); }catch(e){} }
+      return `<td>${v??''}</td>`;
+    }).join("")+"</tr>";
+  });
+  html += `</tbody></table></div><p class="text-white-50 mb-0">Total: ${data.length} registro(s)</p></div>`;
+  document.getElementById("out").innerHTML = html;
+}
+document.querySelectorAll("#tabs .nav-link").forEach(b=>{
+  b.onclick=()=>{ document.querySelectorAll("#tabs .nav-link").forEach(x=>x.classList.remove("active")); b.classList.add("active"); load(b.dataset.t); };
+});
+load("pedidos");
+</script>
+</body>
+</html>
